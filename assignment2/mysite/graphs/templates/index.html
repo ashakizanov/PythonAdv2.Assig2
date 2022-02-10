@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta author="" />
+    <meta generator="" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="" type="text/css" />
+    <script src="" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  </head>
+  <body>
+    <section class="font-sans bg-white container mx-auto px-5">
+      <div class="flex flex-col items-center py-8">
+          <div  id="container" style="width: 100%" class="flex flex-col w-full mb-12">
+             <div class="w-full mx-auto ">
+                <h1 class="mx-auto mb-6 text-2xl font-semibold text-black lg:text-3xl text-black">Django + Chart.js Homework 2</h1>
+                
+                <h2 class="mx-auto mt-4 mb-4 text-2xl font-extrabold text-black">Line Chart</h2>
+                <canvas id="line-chart"></canvas>
+
+                <h2 class="mx-auto mt-4 mb-4 text-2xl font-extrabold text-black">Bar Chart</h2>
+                <canvas id="bar-chart"></canvas>
+
+                <h2 class="mx-auto mt-4 mb-4 text-2xl font-extrabold text-black">Pie Chart</h2>
+                <canvas id="pie-chart"></canvas>
+             </div>
+           </div>
+         </div>
+  </section>
+  </body>
+
+  <script>
+    // {{ labels|safe }} Это адреса 
+    // {{ data|safe }} Это data 
+    // Все остальное просто стили 
+    
+    var topNum = []
+    var colors = ['#EED062','#F3AF42','#C0322E','#F77B4D','#0A4097']
+    var allCol = []
+    for(let i = 1; i <= 100; i++){
+      topNum.push(i)
+    }
+    for(let i = 1; i <= 20; i++){
+      allCol.push(...colors)
+    }
+    var ctx = document.getElementById('line-chart').getContext("2d");
+
+    var gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
+    gradientStroke.addColorStop(0, '#6494c6');
+    gradientStroke.addColorStop(1, '#d598d5');
+
+    var gradientFill = ctx.createLinearGradient(500, 0, 100, 0);
+    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0.6)");
+    gradientFill.addColorStop(1, "rgba(244, 144, 128, 0.6)");
+    
+    var lineChart = {
+      type: 'line',
+      data: {
+        labels: topNum,
+        datasets: [{
+          data: {{ data|safe }},
+          label: 'Top of All Accounts',
+            borderColor: gradientStroke,
+            pointBorderColor: gradientStroke,
+            pointBackgroundColor: gradientStroke,
+            pointHoverBackgroundColor: gradientStroke,
+            pointHoverBorderColor: gradientStroke,
+            pointBorderWidth: 5,
+            pointHoverRadius: 5,
+            pointHoverBorderWidth: 1,
+            pointRadius: 2,
+            fill: true,
+            backgroundColor: gradientFill,
+            borderWidth: 1,
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Chart.js Line Chart'
+          }
+        }
+      },
+    };
+
+    // BAR CHART и цвета
+    var ctx = document.getElementById('bar-chart').getContext("2d");
+
+    var gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
+    gradientStroke.addColorStop(0, '#80b6f4');
+    gradientStroke.addColorStop(1, '#f49080');
+
+    var gradientFill = ctx.createLinearGradient(500, 0, 100, 0);
+    gradientFill.addColorStop(1, "rgba(128, 182, 244, 0.6)");
+    gradientFill.addColorStop(0, "rgba(244, 144, 128, 0.6)");
+
+    var barChart =  {
+      type: "bar",
+      data: {
+        labels: {{ labels|safe }},
+        datasets: [{
+          data: {{ data|safe }},
+          backgroundColor: gradientFill,
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        legend: false,
+        tooltip: false,
+        scales: {
+            xAxes: [{
+                ticks: {
+                    display: false
+                }
+            }]
+        }
+      },
+    };
+
+    // PIE CHART и цвета
+    var pieChart = {
+      type: "pie",
+      data: {
+        datasets: [{
+          data: {{ data|safe }},
+          backgroundColor: allCol ,
+          label: 'account'
+        }],
+        labels: {{ labels|safe }}
+      },
+      options: {
+        responsive: true,
+        legend: false,
+        tooltip: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Share of all accounts'
+          }
+        }
+      },
+    };
+
+    window.onload = function () {
+      var barCtx = document.getElementById("bar-chart").getContext("2d");
+      var pieCtx = document.getElementById("pie-chart").getContext("2d");
+      var lineCtx = document.getElementById("line-chart").getContext("2d");
+
+      window.myPie = new Chart(pieCtx, pieChart);
+      window.myBar = new Chart(barCtx, barChart);
+      window.myLine = new Chart(lineCtx, lineChart);
+    };
+  </script>
+</html>
